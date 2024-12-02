@@ -17,14 +17,36 @@ let data file =
    | (x :: xs, []) -> x :: intersperse xs []
  *)
 
+let is_safe_pair op x y =
+  op x y && abs (x - y) <= 3
+
+let rec faults op lst =
+  match lst with
+  | x :: y :: xs ->
+    if not (op x y) then
+      (x, y) :: faults op (y::xs)
+    else
+      faults op (y::xs)
+  | _ -> []
+
+let find_faults lst =
+  match lst with
+  | x :: y :: _xs ->
+    let op = if x < y then ( < ) else ( > ) in
+    let inv = if x < y then ( > ) else ( < ) in
+    let fs = faults (is_safe_pair op) lst in
+    let fsi = faults (is_safe_pair inv) lst in
+    if List.length fs < List.length fsi then
+      fs
+    else
+      fsi
+  | _ -> []
+
 let rec is_safe_lp1 op level =
   match level with
   | x :: y :: xs -> op x y && is_safe_lp1 op (y :: xs)
   | _ :: [] -> true
   | [] -> true
-
-let is_safe_pair op x y =
-  op x y && abs (x - y) <= 3
 
 let rec is_safe_lp tolerance op level =
   match level with
@@ -42,7 +64,7 @@ let rec is_safe_lp tolerance op level =
 
 let is_safe_but level =
   match level with
-  | x :: y :: xs ->
+  | x :: y :: _xs ->
     let op = if x < y then ( < ) else ( > ) in
     is_safe_lp1 (is_safe_pair op) level
     (* is_safe_lp 0 (is_safe_pair op) level *)
@@ -60,6 +82,8 @@ let unsafe_levels file =
   file
   |> data
   |> List.filter (Fun.negate is_safe)
+  |> List.map (fun row -> (find_faults row, row))
+  |> List.filter (fun p -> List.length (fst p) == 1)
 
 let safe_levels file =
   file
