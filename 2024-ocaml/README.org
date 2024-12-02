@@ -1,0 +1,8 @@
+* Setup
+
+#+begin_src sh
+  dune init proj advent2024
+  echo _build > advent2024/.gitignore
+  echo 'open Advent2024;;' > advent2024/lib/.ocamlinit
+  mv advent2024 2024-ocaml
+#+end_src
