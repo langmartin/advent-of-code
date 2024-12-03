@@ -70,13 +70,49 @@ let is_safe_but level =
     (* is_safe_lp 0 (is_safe_pair op) level *)
   | _ -> false
 
-let is_safe level =
+let is_safe1 level =
   match level with
   | x :: y :: xs ->
     let op = if x < y then ( < ) else ( > ) in
     is_safe_lp 1 (is_safe_pair op) level
     || is_safe_but (y :: xs)
   | _ -> false
+
+let rec take n lst =
+  if n == 0 then
+    []
+  else
+    List.hd lst :: take (n - 1) (List.tl lst)
+
+let rec drop n lst =
+  if n == 0 then
+    lst
+  else
+    drop (n - 1) (List.tl lst)
+
+let rec any pred lst =
+  match lst with
+  | [] -> false
+  | x :: xs -> pred x || any pred xs
+
+let cycle_one lst =
+  lst
+  |> List.mapi (fun i _x ->
+      List.concat [
+        take i lst;
+        drop (i + 1) lst
+      ])
+
+let rec is_safe level =
+  match level with
+  | x :: y :: _xs ->
+    let op = if x < y then ( < ) else ( > ) in
+    is_safe_lp1 (is_safe_pair op) level
+    || level
+       |> cycle_one
+       |> any is_safe
+  | _ ->
+    false
 
 let unsafe_levels file =
   file
