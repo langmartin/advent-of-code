@@ -41,7 +41,7 @@ let part1 =
 let sim_score lst n =
   n * begin
     lst
-    |> List.filter (fun m -> n == m)
+    |> List.filter (( == ) n)
     |> List.length
   end
 
