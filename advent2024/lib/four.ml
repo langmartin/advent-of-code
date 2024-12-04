@@ -32,8 +32,8 @@ let adv src trg =
 let get x y data =
   if x >= 0 &&
      y >= 0 &&
-     x <= max_x data &&
-     y <= max_y data then
+     x < max_x data &&
+     y < max_y data then
     Some (data.(x).(y))
   else
     None
@@ -53,31 +53,33 @@ let samp = [
 ]
 
 let look_around src data =
-  let dist = String.length xmas in
   let f = fun trg ->
     if marks_the_spot src trg 'X' data then
       Some (src, trg)
     else
       None
   in
+  let dt = String.length xmas in
   let (x, y) = src in
-  [(x + dist, y);
-   (x, y + dist);
-   (x + dist, y + dist);
-   (x - dist, y);
-   (x, y - dist);
-   (x - dist, y - dist)]
+  [(x + dt, y);
+   (x, y + dt);
+   (x + dt, y + dt);
+   (x - dt, y);
+   (x, y - dt);
+   (x - dt, y - dt)]
   |> List.map f
 
 let search data =
   let rec lp x y =
-    match (x == max_x data, y == max_y data) with
-    | (true, true) -> []
-    | (false, true) -> lp (x + 1) 0
-    | (_, false) ->
+    if x == max_x data then
+      []
+    else if y == max_y data then
+      lp (x + 1) 0
+    else
       let c = data.(x).(y) in
       if c == 'X' then
         look_around (x, y) data :: lp x (y + 1)
       else
         lp x (y + 1)
-  
+  in
+  lp 0 0
