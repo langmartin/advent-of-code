@@ -11,7 +11,7 @@ let xmas = "XMAS"
 
 let next_c c =
   let i = String.index xmas c in
-  if i < String.length xmas then
+  if i < (String.length xmas - 1) then
     Some (String.get xmas (i + 1))
   else
     None

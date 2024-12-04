@@ -17,3 +17,14 @@ Add these to your .emacs or moral equivalent:
   (setq utop-command "opam exec -- dune utop . -- -emacs")
   (setenv "OCAMLRUNPARAM" "b")
 #+end_src
+
+Stacktraces are turned off by default :shrug:. Exporting that
+environment variable will turn on a stacktrace, but I can only get it
+to work if I load the file rather than evaluating the buffer, so like
+this:
+
+#+begin_src
+  utop[5]> #use "four.ml";;
+  utop[6]> open Four;;
+  utop[7]> search data;;
+#+end_src
