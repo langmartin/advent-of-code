@@ -1,8 +1,18 @@
 * Setup
 
 #+begin_src sh
+  brew install opam
+  opam install ocaml dune merlin ocp-indent
+  opam user-setup install
   dune init proj advent2024
-  echo _build > advent2024/.gitignore
-  echo 'open Advent2024;;' > advent2024/lib/.ocamlinit
-  mv advent2024 2024-ocaml
+  cd advent2024
+  echo _build > .gitignore
+  echo 'open Advent2024;;' > lib/.ocamlinit
+#+end_src
+
+Add these to your .emacs or moral equivalent:
+
+#+begin_src emacs-lisp
+  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+  (setq utop-command "opam exec -- dune utop . -- -emacs")
 #+end_src
