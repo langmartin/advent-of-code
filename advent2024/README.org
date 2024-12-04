@@ -15,4 +15,5 @@ Add these to your .emacs or moral equivalent:
 #+begin_src emacs-lisp
   (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
   (setq utop-command "opam exec -- dune utop . -- -emacs")
+  (setenv "OCAMLRUNPARAM" "b")
 #+end_src
