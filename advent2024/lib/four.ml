@@ -38,17 +38,20 @@ let get x y data =
   else
     None
 
-let rec marks_the_spot src trg c data =
+let rec marks_the_spot_lp next_c src trg c data =
   let (x, y) = src in
   match get x y data with
   | None -> false
   | Some d -> d == c && begin
       match next_c c with
       | None -> true
-      | Some c -> marks_the_spot (adv src trg) trg c data
+      | Some c -> marks_the_spot_lp next_c (adv src trg) trg c data
     end
 
-let look_around src data =
+let marks_the_spot src trg c data =
+  marks_the_spot_lp next_c src trg c data
+
+let look_around1 src data =
   let f = fun trg ->
     if marks_the_spot src trg 'X' data then
       Some (src, trg)
@@ -71,7 +74,32 @@ let look_around src data =
   ]
   |> List.map f
 
-let search data =
+(* sets are more complicated than I'd hoped *)
+let is_ms a b =
+  (a == 'M' && b == 'S') || (a == 'S' && b == 'M')
+
+let gp data x y =
+  let max_x = max_x data in
+  let max_y = max_y data in
+  if 0 <= x && x <= max_x && 0 <= y && y <= max_y then
+    data.(x).(y)
+  else
+    '!'
+
+let look_around2 src data =
+  let wrap v = [v] in
+  let gp = gp data in
+  let (x, y) = src in
+  begin
+    if is_ms (gp (x + 1) (y + 1)) (gp (x - 1) (y - 1)) &&
+       is_ms (gp (x + 1) (y - 1)) (gp (x - 1) (y + 1)) then
+      Some (x, y)
+    else
+      None
+  end
+  |> wrap
+
+let search is_x look_around data =
   let rec lp x y =
     if x > max_x data then
       []
@@ -79,7 +107,7 @@ let search data =
       lp (x + 1) 0
     else
       let c = data.(x).(y) in
-      if c == 'X' then
+      if is_x c then
         look_around (x, y) data :: lp x (y + 1)
       else
         lp x (y + 1)
@@ -89,4 +117,6 @@ let search data =
   |> List.filter Option.is_some
   |> List.map Option.get
 
-let part1 = data |> search |> List.length
+let part1 = data |> search (( == ) 'X') look_around1 |> List.length
+
+let part2 = data |> search (( == ) 'A') look_around2 |> List.length
