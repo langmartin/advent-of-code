@@ -120,3 +120,19 @@ let search is_x look_around data =
 let part1 = data |> search (( == ) 'X') look_around1 |> List.length
 
 let part2 = data |> search (( == ) 'A') look_around2 |> List.length
+
+(* I don't need this stuff *)
+
+let eq a b =
+    let (ax, ay) = a in
+    let (bx, by) = b in
+    ax == bx && ay == by
+
+let rec uniq lst =
+  match lst with
+  | x :: y :: xs -> if eq x y then
+      x :: uniq xs
+    else
+      x :: uniq (y :: xs)
+  | x :: xs -> x :: xs
+  | [] -> []
