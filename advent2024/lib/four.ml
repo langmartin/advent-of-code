@@ -32,8 +32,8 @@ let adv src trg =
 let get x y data =
   if x >= 0 &&
      y >= 0 &&
-     x < max_x data &&
-     y < max_y data then
+     x <= max_x data &&
+     y <= max_y data then
     Some (data.(x).(y))
   else
     None
@@ -48,10 +48,6 @@ let rec marks_the_spot src trg c data =
       | Some c -> marks_the_spot (adv src trg) trg c data
     end
 
-let samp = [
-  ['X'; 'M'; 'A'; 'S']
-]
-
 let look_around src data =
   let f = fun trg ->
     if marks_the_spot src trg 'X' data then
@@ -61,19 +57,25 @@ let look_around src data =
   in
   let dt = String.length xmas in
   let (x, y) = src in
-  [(x + dt, y);
-   (x, y + dt);
-   (x + dt, y + dt);
-   (x - dt, y);
-   (x, y - dt);
-   (x - dt, y - dt)]
+  [
+    (x + dt, y);                (* right *)
+    (x - dt, y);                (* left *)
+
+    (x, y + dt);                (* down *)
+    (x, y - dt);                (* up *)
+
+    (x + dt, y + dt);           (* four diagonals *)
+    (x + dt, y - dt);
+    (x - dt, y + dt);
+    (x - dt, y - dt);
+  ]
   |> List.map f
 
 let search data =
   let rec lp x y =
-    if x == max_x data then
+    if x > max_x data then
       []
-    else if y == max_y data then
+    else if y > max_y data then
       lp (x + 1) 0
     else
       let c = data.(x).(y) in
@@ -83,3 +85,8 @@ let search data =
         lp x (y + 1)
   in
   lp 0 0
+  |> List.flatten
+  |> List.filter Option.is_some
+  |> List.map Option.get
+
+let part1 = data |> search |> List.length
