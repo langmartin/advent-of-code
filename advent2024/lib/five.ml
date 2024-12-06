@@ -70,13 +70,13 @@ let middle_page upd =
   let mid = Int.div (List.length upd) 2 in
   List.nth upd mid
 
-(* let part1_file = "../input/five-sample.txt" *)
-let part1_file = "../input/five.txt"
+let samp_file = "../input/five-sample.txt"
+let data_file = "../input/five.txt"
 
-let rules = part1_file |> read_order_rules
+let rules = data_file |> read_order_rules
 
 let part1 =
-  part1_file
+  data_file
   |> read_updates
   |> List.filter (update_ok rules)
   |> List.map middle_page
@@ -100,7 +100,7 @@ let upd_compare rules a b =
   if dfs rules (( == ) a) b then 1 else -1
 
 let part2 =
-  part1_file
+  samp_file
   |> read_updates
   |> List.filter (Fun.negate (update_ok rules))
   |> List.map (fun upd -> List.sort (upd_compare rules) upd)
