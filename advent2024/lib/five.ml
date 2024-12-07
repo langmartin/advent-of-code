@@ -100,7 +100,7 @@ let upd_compare rules a b =
   if dfs rules (( == ) a) b then 1 else -1
 
 let part2 =
-  samp_file
+  data_file
   |> read_updates
   |> List.filter (Fun.negate (update_ok rules))
   |> List.map (fun upd -> List.sort (upd_compare rules) upd)
