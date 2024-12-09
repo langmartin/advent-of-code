@@ -31,22 +31,38 @@ let exc ns ops =
     (List.tl ns)
     ops
 
-let go (ans, args) =
+let go1 ops (ans, args) =
   let open List in
   let ps = ps (List.length args - 1) ops in
-  ps
-  |> map (exc args)
-  |> filter (( == ) ans)
-(* |> args_of args *)
-
-let args_of args got =
-  let open List in
-  map2 (fun g a -> g, a) got args
-  |> filter (fun (g, _a) -> not (is_empty g))
-  |> map snd
+  let found = ps |> map (exc args) |> filter (( == ) ans) in
+  if is_empty found then
+    0
+  else
+    ans
 
 let part1 =
-  "../input/seven-samp.txt"
+  let go = go1 ops in
+  "../input/seven.txt"
   |> One.read_lines
   |> List.map read_ln
   |> List.map go
+  |> One.sum
+
+(* part 2 *)
+
+let ncat n m =
+  [n; m]
+  |> List.map Int.to_string
+  |> String.concat ""
+  |> int_of_string
+
+let ops2 = [( + ); ( * ); ncat]
+
+let part2 =
+  let go = go1 ops2 in
+  "../input/seven.txt"
+  |> One.read_lines
+  |> List.map read_ln
+  |> List.map go
+  |> One.sum
+
