@@ -40,7 +40,7 @@ let go1 ops (ans, args) =
   else
     ans
 
-let part1 =
+let part1 () =
   let go = go1 ops in
   "../input/seven.txt"
   |> One.read_lines
@@ -58,11 +58,10 @@ let ncat n m =
 
 let ops2 = [( + ); ( * ); ncat]
 
-let part2 =
+let part2 () =
   let go = go1 ops2 in
   "../input/seven.txt"
   |> One.read_lines
   |> List.map read_ln
   |> List.map go
   |> One.sum
-
