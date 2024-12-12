@@ -11,9 +11,6 @@ module Pos = struct
 
   let compare (xa, ya) (xb, yb) =
     xa - ya + (xb - yb)
-
-  let cardinal =
-    [1, 0; -1, 0; 0, 1; 0, -1]
 end
 
 module Grid = struct
@@ -43,25 +40,28 @@ module Grid = struct
 
   let is_in = Fun.negate (( == ) (-1))
 
+  let cardinal =
+    [1, 0; -1, 0; 0, 1; 0, -1]
+
   let orth grid pos =
-    let open Pos in
     let open List in
     cardinal
-    |> map (plus pos)
-    |> map (get grid)
-    |> filter is_in
+    |> map (Pos.plus pos)
+    |> filter (fun pos ->
+        is_in (get grid pos))
 
   let rec range n n_excl =
     if n == n_excl then [] else
       n :: range (n + 1) n_excl
 
   let positions grid =
+    let open List in
     range 0 (x_len grid)
-    |> List.map (fun x ->
+    |> map (fun x ->
         range 0 (y_len grid)
-        |> List.map (fun y -> (x, y))
+        |> map (fun y -> (x, y))
       )
-    |> List.flatten
+    |> flatten
 end
 
 let find f grid =
@@ -71,7 +71,18 @@ let find f grid =
   |> Grid.positions
   |> List.filter f
 
+let rec trail grid pos =
+  let open Grid in
+  match get grid pos with
+  | 9 -> [[pos]]
+  | h ->
+    let open List in
+    orth grid pos
+    |> filter (fun p' -> get grid p' > h)
+    |> map (fun p' -> p' :: (trail grid p' |> flatten))
+
 let part1 =
-  "../input/ten-samp.txt"
-  |> Grid.read
+  let grid = "../input/ten-samp.txt" |> Grid.read in
+  grid
   |> find (( == ) 0)
+  |> List.map (trail grid)
