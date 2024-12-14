@@ -47,8 +47,7 @@ module Grid = struct
     let open List in
     cardinal
     |> map (Pos.plus pos)
-    |> filter (fun pos ->
-        is_in (get grid pos))
+    |> filter (fun pos -> is_in (get grid pos))
 
   let rec range n n_excl =
     if n == n_excl then [] else
@@ -70,6 +69,22 @@ let find f grid =
   grid
   |> Grid.positions
   |> List.filter f
+
+module Ps = Set.Make(Pos)
+
+let rec dfs grid seen pos =
+  let open Grid in
+  let v = get grid pos in
+  let seen = Ps.add pos seen in
+  if v == 9 then
+    [pos]
+  else
+    let open List in
+    orth grid pos
+    |> filter (fun p' -> not (Ps.exists p' seen))
+    |> filter (fun p' -> get grid p' > v)
+    |> map (fun p' -> p' :: (dfs grid seen p'))
+
 
 let rec trail grid pos =
   let open Grid in
