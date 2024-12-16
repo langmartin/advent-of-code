@@ -84,7 +84,23 @@ module Ps = Set.Make(Pos)
 (*     |> filter (fun p' -> get grid p' > v) *)
 (*     |> map (fun p' -> p' :: (dfs grid seen p')) *)
 
+(*
 let rec trail grid pos =
+let rec dfs grid seen pos =
+  let open Grid in
+  let v = get grid pos in
+  let seen = Ps.add pos seen in
+  if v == 9 then
+    [pos]
+  else
+    let open List in
+    orth grid pos
+    |> filter (fun p' -> not (Ps.exists p' seen))
+    |> filter (fun p' -> get grid p' > v)
+    |> map (fun p' -> p' :: (dfs grid seen p'))
+   *)
+
+let rec trail2 grid seen pos =
   let open Grid in
   match get grid pos with
   | 9 -> [[pos]]
@@ -92,9 +108,13 @@ let rec trail grid pos =
     let open List in
     orth grid pos
     |> filter (fun p' -> get grid p' > h)
-    |> map (fun p' -> p' :: (trail grid p' |> flatten))
+    |> map (fun p' -> p' :: (trail2 grid seen p' |> flatten))
 
-let part1 =
+let trail grid pos =
+  trail2 grid Ps.empty pos
+  |> List.map (List.cons pos)
+
+let part1() =
   let grid = "../input/ten-samp.txt" |> Grid.read in
   grid
   |> find (( == ) 0)
