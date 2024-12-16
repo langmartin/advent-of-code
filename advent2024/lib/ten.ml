@@ -64,7 +64,6 @@ module Grid = struct
 end
 
 let find f grid =
-  let open List in
   let f = fun pos -> Grid.get grid pos |> f in
   grid
   |> Grid.positions
@@ -72,19 +71,18 @@ let find f grid =
 
 module Ps = Set.Make(Pos)
 
-let rec dfs grid seen pos =
-  let open Grid in
-  let v = get grid pos in
-  let seen = Ps.add pos seen in
-  if v == 9 then
-    [pos]
-  else
-    let open List in
-    orth grid pos
-    |> filter (fun p' -> not (Ps.exists p' seen))
-    |> filter (fun p' -> get grid p' > v)
-    |> map (fun p' -> p' :: (dfs grid seen p'))
-
+(* let rec dfs grid seen pos = *)
+(*   let open Grid in *)
+(*   let v = get grid pos in *)
+(*   let seen = Ps.add pos seen in *)
+(*   if v == 9 then *)
+(*     [pos] *)
+(*   else *)
+(*     let open List in *)
+(*     orth grid pos *)
+(*     |> filter (fun p' -> not (Ps.exists p' seen)) *)
+(*     |> filter (fun p' -> get grid p' > v) *)
+(*     |> map (fun p' -> p' :: (dfs grid seen p')) *)
 
 let rec trail grid pos =
   let open Grid in
