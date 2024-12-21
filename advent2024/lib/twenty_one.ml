@@ -39,26 +39,3 @@ let directional = Edges.of_list [
     D('A', '>');
     D('<', 'v'); D('v', '>');
   ]
-
-(*
-module Cmap = Map.Make(Char)
-
-let dir_mv = Cmap.of_list [
-    '!', (0, 0);
-    '^', (0, -1);
-    'A', (0, 0);
-    '<', (-1, 0);
-    'v', (0, 1);
-    '>', (1, 0)
-  ]
-
-let get_dir (x, y) =
-  let xs = List.nth directional y in
-  let ch = List.nth xs x in
-  Cmap.find ch dir_mv
-
-let move num dir =
-  let (dx, dy) = get_dir dir in
-  let (x, y) = dir in
-  (x + dx, y + dy)
-*)
